@@ -929,14 +929,14 @@ _ITM_commitTransaction(void)
 				double changeForBetter = (((double) current_memoized->lastCycles) / ((double) finalTicks));
 				unsigned short lastRetries = current_memoized->lastRetries;
 				unsigned short currentRetries = current_memoized->retries;
-				if (changeForWorse > 0.40) {
+				if (changeForWorse > 1.40) {
 					current_memoized->retries = current_memoized->bestEverRetries;
 					current_memoized->lastCycles = current_memoized->bestEverCycles;
 					current_memoized->lastRetries = current_memoized->bestEverRetries;
 				} else {
-					if (changeForBetter > 0.05) {
+					if (changeForBetter > 1.05) {
 						current_memoized->retries = currentRetries + (currentRetries - lastRetries);
-					} else if (changeForWorse > 0.05) {
+					} else if (changeForWorse > 1.05) {
 						current_memoized->retries = currentRetries - (currentRetries - lastRetries);
 					}
 					if (currentRetries > 16) {
