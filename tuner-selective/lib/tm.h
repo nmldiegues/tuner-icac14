@@ -114,7 +114,7 @@
                             }\
                             if (unlikely(shouldProfile)) { \
                             	unsigned long long finalTicks = tick() - startTicks; \
-                            	double rewardCapacity, rewardOther, rewardGiveUp; \
+                            	double rewardCapacity = 0.0, rewardOther = 0.0, rewardGiveUp = 0.0 ; \
                             	if (believedCapacityAborts == STUBBORN) { \
                             	    current_memoized->cyclesTransient += finalTicks; \
                             	} else if (believedCapacityAborts == GIVEUP) { \
@@ -123,7 +123,7 @@
                             	    current_memoized->cyclesCapacity += finalTicks; \
                             	} \
                             	double logSum = 2*log((double)(current_memoized->believedCapacity + current_memoized->believedTransient)); \
-                            	double ucbCapacity, ucbOther, ucbGiveUp; \
+                            	double ucbCapacity = 0.0, ucbOther = 0.0, ucbGiveUp = 0.0; \
                             	if (likely(random_generate(randomFallback) % 100 < 95)) { \
                                     double avgCapacityCycles = ((double)current_memoized->cyclesCapacity) / current_memoized->believedCapacity; \
                                     double avgTransientCycles = ((double)current_memoized->cyclesTransient) / current_memoized->believedTransient; \
