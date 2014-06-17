@@ -925,37 +925,44 @@ _ITM_commitTransaction(void)
 				current_memoized->havingCapacityAborts = HALVEN;
 			}
 			if (likely(current_memoized->lastCycles != 0)) {
-        		double changeForWorse = (((double) finalTicks) / ((double) current_memoized->lastCycles));
-				double changeForBetter = (((double) current_memoized->lastCycles) / ((double) finalTicks));
-				unsigned short lastRetries = current_memoized->lastRetries;
-				unsigned short currentRetries = current_memoized->retries;
-				if (changeForWorse > 1.40) {
-					current_memoized->retries = current_memoized->bestEverRetries;
-					current_memoized->lastCycles = current_memoized->bestEverCycles;
-					current_memoized->lastRetries = current_memoized->bestEverRetries;
-				} else {
-					if (changeForBetter > 1.05) {
-						current_memoized->retries = currentRetries + (currentRetries - lastRetries);
-					} else if (changeForWorse > 1.05) {
-						current_memoized->retries = currentRetries - (currentRetries - lastRetries);
-					}
-					if (currentRetries > 16) {
-						current_memoized->retries = 16;
-					} else if (currentRetries < 0){
-						current_memoized->retries = 0;
-					}
-					current_memoized->lastRetries = currentRetries;
+				if (unlikely(random_generate(randomFallback) % 100 < 1)) {
+					current_memoized->lastRetries = current_memoized->retries;
 					current_memoized->lastCycles = finalTicks;
-				}
-				if (finalTicks < current_memoized->bestEverCycles) {
-					current_memoized->bestEverCycles = finalTicks;
-					current_memoized->bestEverRetries = currentRetries;
+					current_memoized->retries = random_generate(randomFallback) % 16 + 1;
+				} else {
+					double changeForWorse = (((double) finalTicks) / ((double) current_memoized->lastCycles));
+					double changeForBetter = (((double) current_memoized->lastCycles) / ((double) finalTicks));
+					unsigned short lastRetries = current_memoized->lastRetries;
+					unsigned short currentRetries = current_memoized->retries;
+					if (changeForWorse > 1.40) {
+						current_memoized->retries = current_memoized->bestEverRetries;
+						current_memoized->lastCycles = current_memoized->bestEverCycles;
+						current_memoized->lastRetries = current_memoized->bestEverRetries;
+					} else {
+						if (changeForBetter > 1.05) {
+							current_memoized->retries = currentRetries + (currentRetries - lastRetries);
+						} else if (changeForWorse > 1.05) {
+							current_memoized->retries = currentRetries - (currentRetries - lastRetries);
+						}
+						if (currentRetries > 16) {
+							current_memoized->retries = 16;
+						} else if (currentRetries < 0){
+							current_memoized->retries = 0;
+						}
+						current_memoized->lastRetries = currentRetries;
+						current_memoized->lastCycles = finalTicks;
+					}
+					if (finalTicks < current_memoized->bestEverCycles) {
+						current_memoized->bestEverCycles = finalTicks;
+						current_memoized->bestEverRetries = currentRetries;
+					}
 				}
 			} else {
 				current_memoized->lastCycles = finalTicks;
 				current_memoized->bestEverCycles = finalTicks;
 				current_memoized->lastRetries = current_memoized->retries;
 				current_memoized->bestEverRetries = current_memoized->retries;
+				current_memoized->retries = current_memoized->retries + 1; \
 			}
 		}
 
